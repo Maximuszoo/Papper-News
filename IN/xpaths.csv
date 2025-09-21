@@ -1,0 +1,4 @@
+xpath, name
+//*[@id="cs.AI"], "Artificial Intelligence"
+//*[@id="cs.SE"], "Software Engineering"
+//*[@id="cs.GT"], "Game Theory"
