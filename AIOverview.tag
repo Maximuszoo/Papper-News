@@ -8,12 +8,12 @@ type //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[1]/
 click //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[2]/div/div[2]
 
 //wait for response to be generated (adjust time as needed)
-wait 90
+wait 100
 
 //extract the complete response from the specific location
 read //*[@id="root"]/div/div/div[2]/div[3]/div/div[2]/div/div[2]/div[1]/div[2] to deepseek_response
 
-//clean up the response and make it beautiful for WhatsApp
+//clean up the response and process JSON for WhatsApp
 js begin
   // Remove HTML tags and convert to plain text
   var cleanResponse = deepseek_response.replace(/<[^>]*>/g, '');
@@ -28,36 +28,47 @@ js begin
   // Clean up extra whitespace and normalize spaces
   cleanResponse = cleanResponse.replace(/\s+/g, ' ').trim();
   
-  // Replace ** bold markers with WhatsApp formatting
-  cleanResponse = cleanResponse.replace(/\*\*(.*?)\*\*/g, '*$1*');
-  
-  // Split by HR tags (papers are separated by <hr> in the original HTML)
-  // Since we removed HTML tags, we need to split by a marker
-  // First, let's identify paper boundaries by looking for emoji patterns
+  // Try to extract JSON from the response
   var papers = [];
-  var paperSections = cleanResponse.split(/(?=🔬\s*\*?Título en Español)/);
+  try {
+    // Look for JSON pattern in the response
+    var jsonMatch = cleanResponse.match(/\{.*"papers".*\}/);
+    if (jsonMatch) {
+      var jsonData = JSON.parse(jsonMatch[0]);
+      
+      // Process each paper from the JSON
+      if (jsonData.papers && Array.isArray(jsonData.papers)) {
+        for (var i = 0; i < jsonData.papers.length; i++) {
+          var paper = jsonData.papers[i];
+          
+          // Format the paper for WhatsApp
+          var formattedPaper = '';
+          if (paper.titulo_español) {
+            formattedPaper += paper.titulo_español + '\n\n';
+          }
+          if (paper.resumen) {
+            formattedPaper += paper.resumen + '\n\n';
+          }
+          if (paper.puntos_clave) {
+            formattedPaper += paper.puntos_clave + '\n\n';
+          }
+          if (paper.enlace) {
+            formattedPaper += paper.enlace;
+          }
+          
+          // Add to papers array
+          papers.push(formattedPaper.trim());
+        }
+      }
+    }
+  } catch (e) {
+    // If JSON parsing fails, create an error message
+    papers = ['Error al procesar la respuesta JSON: ' + e.message + '\n\nRespuesta original:\n' + cleanResponse];
+  }
   
-  // Process each paper section
-  for (var i = 0; i < paperSections.length; i++) {
-    var paper = paperSections[i].trim();
-    
-    // Skip empty sections
-    if (!paper || paper.length < 10) continue;
-    
-    // Clean up the paper content
-    paper = paper.replace(/\s+/g, ' ').trim();
-    
-    // Add proper line breaks for WhatsApp formatting
-    paper = paper.replace(/🔬\s*/g, '\n🔬 ');
-    paper = paper.replace(/📝\s*/g, '\n📝 ');
-    paper = paper.replace(/🎯\s*/g, '\n🎯 ');
-    paper = paper.replace(/🔗\s*/g, '\n🔗 ');
-    
-    // Remove leading newlines
-    paper = paper.replace(/^\n+/, '');
-    
-    // Add to papers array
-    papers.push(paper);
+  // Fallback: if no papers found, add the original response
+  if (papers.length === 0) {
+    papers = ['No se encontraron papers en formato JSON.\n\nRespuesta original:\n' + cleanResponse];
   }
   
   // Store papers array and total count for the for loop

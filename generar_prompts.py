@@ -40,16 +40,12 @@ def build_prompt_for_batch(batch, max_per_paper_lines=3):
     """
     n = len(batch)
     instruction = (
-        f"Resume los siguientes {n} papers científicos en formato atractivo para WhatsApp. "
-        f"Para cada paper traduce el título al español y escribe: Título en Español, Resumen (máximo {max_per_paper_lines} líneas) y Puntos Clave. "
+        f"Resume los siguientes {n} papers científicos y devuelve la respuesta en formato JSON válido. "
+        f"Para cada paper traduce el título al español y crea un objeto con los campos especificados. "
         "Usa emojis apropiados (🤖 para IA, 💻 para software, 🔒 para seguridad, 🧬 para investigación, etc.). "
-        "IMPORTANTE: NO saludes, NO agregues introducción, NO digas 'Aquí tienes' o similares. Ve directo al grano y empieza inmediatamente con el primer paper. "
-        "Formato requerido por paper: "
-        "🔬 **Título en Español:** <traducción del título> "
-        "📝 **Resumen:** <máximo 3 líneas explicando el contenido> "
-        "🎯 **Puntos Clave:** <aspectos más importantes> "
-        "🔗 **Enlace:** <URL> "
-        "Separa cada paper con líneas y haz que se vea atractivo para compartir. "
+        "IMPORTANTE: Responde ÚNICAMENTE con el JSON válido, sin texto adicional antes o después. "
+        "Estructura JSON requerida: "
+        '{"papers": [{"titulo_español": "🔬 [emoji apropiado] Título traducido", "resumen": "[emoji 📝] Resumen en máximo 3 líneas", "puntos_clave": "[emoji 🎯] Aspectos más importantes", "enlace": "[emoji 🔗] URL del paper"}, ...]} '
         "A continuación vienen los papers:"
     )
 
