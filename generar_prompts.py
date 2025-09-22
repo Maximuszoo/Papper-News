@@ -2,13 +2,13 @@
 """
 generar_prompts.py
 
-Lee un CSV con columnas: name, Description, URL
-Agrupa registros en lotes (por defecto 10) y genera un CSV de salida con
-una columna 'prompt' donde cada fila contiene el prompt (una sola línea)
-que le darás a la IA para resumir esos papers (máx 3 renglones por paper,
-estructura con Título, Resumen y Descripción).
+Reads a CSV with columns: name, Description, URL
+Groups records into batches (default 10) and produces an output CSV with
+a single column 'prompt' where each row contains the prompt (one line)
+that will be sent to the AI to summarize those papers (max 3 lines per paper,
+structure containing Title, Summary and Description).
 
-Uso:
+Usage:
     python generar_prompts.py input.csv output.csv
     python generar_prompts.py input.csv output.csv --batch-size 10
 
@@ -22,21 +22,21 @@ import html
 import re
 
 def clean_text_one_line(text: str) -> str:
-    """Elimina saltos de línea y espacios múltiples, y recorta."""
+    """Remove line breaks and duplicate whitespace, then trim the string."""
     if text is None:
         return ""
-    # Convertir entidades HTML si las hubiera
+    # Convert HTML entities if any
     text = html.unescape(text)
-    # Reemplazar cualquier newline o retorno por un espacio
+    # Replace any newline or return with a space
     text = re.sub(r'[\r\n]+', ' ', text)
-    # Reemplazar múltiples espacios por uno
+    # Replace multiple spaces with one
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
 def build_prompt_for_batch(batch, max_per_paper_lines=3):
     """
-    batch: lista de dicts con keys: name, Description, URL
-    Devuelve un string (una línea) con la instrucción + los papers formateados.
+    batch: list of dicts with keys: name, Description, URL
+    Returns a single-line string containing the instruction plus the formatted papers.
     """
     n = len(batch)
     instruction = (
@@ -57,29 +57,29 @@ def build_prompt_for_batch(batch, max_per_paper_lines=3):
         entry = f"{idx}. Título Original: {title} | Descripción: {desc} | URL: {url}"
         entries.append(entry)
 
-    # Unir todo en UNA LÍNEA separando papers con " ||| " para mayor claridad
+    # Merge everything in ONE LINE separating papers with " ||| " for clarity
     joined_entries = " ||| ".join(entries)
     prompt = instruction + " " + joined_entries
     return prompt
 
 def read_input_csv(path):
-    """Lee el CSV de entrada y devuelve la lista de filas (dicts)."""
+    """Read the input CSV and return a list of rows as dicts."""
     rows = []
     with open(path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
-        # Validación básica de columnas (no fatal, solo advertencia si faltan)
+    # Basic validation of columns (non-fatal, only warn if missing)
         expected = {'name', 'Description', 'URL'}
         found = set(reader.fieldnames or [])
         missing = expected - found
         if missing:
-            # no interrumpe; asume que user tiene columnas con nombres parecidos
+            # does not break; assumes that user has columns with similar names
             print(f"Advertencia: columnas esperadas ausentes en input CSV: {missing}. Continuando...", file=sys.stderr)
         for r in reader:
             rows.append(r)
     return rows
 
 def write_output_csv(prompts, out_path):
-    """Escribe un CSV con una sola columna 'prompt'."""
+    """Write an output CSV with a single 'prompt' column."""
     with open(out_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['prompt'])
@@ -87,7 +87,7 @@ def write_output_csv(prompts, out_path):
             writer.writerow([p])
 
 def chunk_list(lst, n):
-    """Divide la lista en chunks de tamaño n (el último puede ser más pequeño)."""
+    """Yield successive n-sized chunks from lst (last chunk may be smaller)."""
     for i in range(0, len(lst), n):
         yield lst[i:i+n]
 

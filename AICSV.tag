@@ -110,5 +110,5 @@ if total_papers greater than 0
     write `csv_row([csv_titulo, csv_resumen, csv_puntos, csv_enlace, csv_fecha])` to OUT/ProcessedPapers.csv
 
 echo ============================================================================
-echo Proceso completado. Papers guardados en OUT/ProcessedPapers.csv
+echo Proceso completado.
 echo ============================================================================

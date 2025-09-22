@@ -84,15 +84,18 @@ echo `whatsapp_content`
 echo ============================================================================
 echo Total papers encontrados: `total_papers`
 
+// Open WhatsApp Web
 https://web.whatsapp.com/
 
 wait 7
 
+// Click in the group chat name to open it
 click Papper News 9129324123
 
 for paper_index from 0 to total_papers-1
   js current_paper = paper_messages[paper_index]
   
+  // Click the message input box, type the current paper, and send
   click //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[3]
   type //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[3] as `current_paper`
   click //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[4]/div/span/div/div/div[1]/div[1]

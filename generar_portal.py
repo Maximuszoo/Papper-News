@@ -2,10 +2,10 @@
 """
 generar_portal.py
 
-Genera un portal web de noticias científicas a partir de un CSV con papers procesados.
-Maneja headers duplicados y crea un sitio web moderno estilo YouTube Music en modo oscuro.
+Generates a news portal HTML from a CSV containing processed papers.
+Handles duplicated headers and produces a modern dark-themed site (YouTube Music style).
 
-Uso:
+Usage:
     python generar_portal.py input.csv output.html
     python generar_portal.py OUT/ProcessedPapers.csv portal_noticias.html
 
@@ -21,34 +21,33 @@ from datetime import datetime
 from collections import defaultdict
 
 def clean_text(text):
-    """Limpia y sanitiza el texto para HTML."""
+    """Clean and sanitize text for inclusion in HTML."""
     if not text:
         return ""
-    # Escapar HTML
+    # Escape HTML
     text = html.escape(text)
-    # Preservar emojis y formato básico
+    # Preserve emojis and basic formatting
     return text.strip()
 
 def clean_url(url):
-    """Limpia y valida URLs para asegurar que sean absolutos."""
+    """Clean and validate URLs to ensure they are absolute and well-formed."""
     if not url:
         return ""
     
     url = url.strip()
     
-    # Limpiar caracteres extraños y URLs malformadas
-    # Remover prefijos problemáticos como "xn--" y caracteres codificados
+    # Remove problematic prefixes and malformed URL patterns (e.g. xn--)
     url = re.sub(r'^https?://xn--[^/]*', '', url)
     url = re.sub(r'^[^h]*https?://', 'https://', url)
     
-    # Limpiar URLs duplicadas como "https://https://..."
+    # Normalize duplicated protocol occurrences like "https://https://..."
     url = re.sub(r'https?://.*?https?://', 'https://', url)
     
-    # Limpiar caracteres de control y espacios
+    # Remove control characters and spaces
     url = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', url)
     url = url.replace(' ', '')
     
-    # Extraer la URL real si hay múltiples URLs concatenadas
+    # Extract a valid arXiv URL if multiple URLs are concatenated
     arxiv_match = re.search(r'arxiv\.org/[^\s"<>]*', url)
     if arxiv_match:
         clean_part = arxiv_match.group(0)
@@ -57,46 +56,45 @@ def clean_url(url):
         else:
             url = clean_part
     
-    # Si ya tiene protocolo válido, devolverlo
+    # If it already has a valid protocol, normalize repeated slashes and return
     if url.startswith(('http://', 'https://')):
-        # Validar que no tenga dobles barras problemáticas
         url = re.sub(r'([^:])//+', r'\1/', url)
         return url
-    
-    # Si empieza con //, agregar https:
+
+    # If it starts with //, add https:
     if url.startswith('//'):
         return 'https:' + url
     
-    # Si es un path relativo de arXiv, construir URL completa
+    # If it's an arXiv relative path, build a full URL
     if url.startswith('/'):
         return 'https://arxiv.org' + url
-    
-    # Si contiene arxiv.org pero no tiene protocolo
+
+    # If it contains arxiv.org but doesn't have a protocol
     if 'arxiv.org' in url and not url.startswith('http'):
         return 'https://' + url
-    
-    # Para otros casos, asumir que necesita https://
+
+    # For other cases, assume it needs https://
     if '.' in url and not url.startswith('http'):
         return 'https://' + url
     
     return url
 
 def extract_emoji_from_title(title):
-    """Extrae el emoji del título si existe."""
+    """Extract emoji from the start of a title if present, otherwise return a default."""
     if not title:
         return "", title
-    
-    # Buscar emoji al inicio del título
+
+    # Search for emoji at the start of the title
     emoji_pattern = r'^([🔬🤖💻🔒🧬🏥📊🔍🎯🌊📐💼🧠🤝💡🔧🚇📶🔬🆔🧮🎨🎵🎮🎪🎭🎨🎯🎲🎪🎭🏆🏅🏏🏀⚽🏈🎾🏸🏓🏑🏒🥅⛳🏹🎣🥊🥋🏔️⛰️🏕️🏜️🏝️🏟️🏛️🏗️🏘️🏚️🏠🏡🏢🏣🏤🏥🏦🏧🏨🏩🏪🏫🏬🏭🏮🏯🏰🗼🗽⛪🕌🕍🕎🔬🔭🔬🧪🧬⚗️🔬🧮🧲⚡🔋🔌💻⌨️🖥️🖨️🖱️💿💾💽📀🧮💾🔌⚡🔋🔬🧪🧬⚗️🔬🧮🧲⚡🔋])\s*(.*)$'
     
     match = re.match(emoji_pattern, title)
     if match:
         return match.group(1), match.group(2).strip()
     
-    return "📄", title  # Emoji por defecto
+    return "📄", title  # Default emoji
 
 def categorize_by_emoji(emoji):
-    """Categoriza los papers por emoji."""
+    """Map an emoji to a human-friendly category name."""
     categories = {
         "🤖": "Inteligencia Artificial",
         "💻": "Desarrollo de Software", 
@@ -119,14 +117,14 @@ def categorize_by_emoji(emoji):
     return categories.get(emoji, "Otros")
 
 def process_csv_robust(filepath):
-    """Procesa el CSV de manera robusta, manejando headers duplicados."""
+    """Process the CSV robustly, handling duplicated header rows and noisy data."""
     papers = []
     headers_found = set()
     
     with open(filepath, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         
-        # Buscar la primera línea que parece ser headers válidos
+        # Find the first row that appears to be a valid header row
         headers = None
         for row in reader:
             if len(row) >= 4 and any(col.lower() in ['titulo', 'title', 'resumen', 'summary'] for col in row):
@@ -139,14 +137,14 @@ def process_csv_robust(filepath):
         
         print(f"Headers encontrados: {headers}")
         
-        # Mapear índices de columnas
+    # Map column indices by common header names
         title_idx = next((i for i, h in enumerate(headers) if h.lower() in ['titulo', 'title']), 0)
         summary_idx = next((i for i, h in enumerate(headers) if h.lower() in ['resumen', 'summary']), 1)
         points_idx = next((i for i, h in enumerate(headers) if h.lower() in ['puntos_clave', 'points', 'key_points']), 2)
         link_idx = next((i for i, h in enumerate(headers) if h.lower() in ['enlace', 'link', 'url']), 3)
         date_idx = next((i for i, h in enumerate(headers) if h.lower() in ['fecha', 'date', 'fecha_procesado']), 4)
         
-        # Procesar filas de datos
+        # Iterate over data rows and extract fields
         for row in reader:
             # Saltar filas que son headers duplicados
             if len(row) >= 4 and row[title_idx].lower() in ['titulo', 'title']:
@@ -156,7 +154,7 @@ def process_csv_robust(filepath):
             if len(row) < 4 or not any(row):
                 continue
             
-            # Extraer datos
+            # Extract fields from the row
             try:
                 title = row[title_idx] if title_idx < len(row) else ""
                 summary = row[summary_idx] if summary_idx < len(row) else ""
@@ -164,15 +162,15 @@ def process_csv_robust(filepath):
                 link = row[link_idx] if link_idx < len(row) else ""
                 date = row[date_idx] if date_idx < len(row) else ""
                 
-                # Validar que al menos el título no esté vacío
+                # Validate that at least the title is not empty
                 if not title or len(title.strip()) < 5:
                     continue
                 
-                # Extraer emoji y categorizar
+                # Extract emoji and categorize
                 emoji, clean_title = extract_emoji_from_title(title)
                 category = categorize_by_emoji(emoji)
                 
-                # Debug: imprimir URLs problemáticas
+                # Debug: print cleaned URLs for problematic inputs
                 original_link = link.strip()
                 cleaned_link = clean_url(original_link)
                 if original_link != cleaned_link:
@@ -191,21 +189,21 @@ def process_csv_robust(filepath):
                 papers.append(paper)
                 
             except IndexError as e:
-                print(f"Error procesando fila: {row[:3]}... - {e}", file=sys.stderr)
+                print(f"Error processing row: {row[:3]}... - {e}", file=sys.stderr)
                 continue
     
     print(f"Procesados {len(papers)} papers válidos")
     return papers
 
 def generate_html(papers, output_file):
-    """Genera el HTML del portal de noticias."""
+    """Generate the portal HTML from the processed papers list."""
     
-    # Agrupar por categoría
+    # Group papers by category
     categories = defaultdict(list)
     for paper in papers:
         categories[paper['category']].append(paper)
     
-    # Ordenar categorías por número de papers
+    # Sort categories by number of papers (descending)
     sorted_categories = sorted(categories.items(), key=lambda x: len(x[1]), reverse=True)
     
     current_date = datetime.now().strftime("%d de %B de %Y")
@@ -491,9 +489,9 @@ def generate_html(papers, output_file):
     <main class="container">
 """
 
-    # Generar contenido por categorías
+    # Render content for each category
     for category_name, category_papers in sorted_categories:
-        # Obtener el emoji más común de la categoría
+        # Get the most common emoji in the category
         category_emoji = category_papers[0]['emoji'] if category_papers else "📄"
         
         html_content += f"""
@@ -508,13 +506,13 @@ def generate_html(papers, output_file):
 """
         
         for paper in category_papers:
-            # Limpiar y formatear puntos clave
+            # Clean and format key points for display
             points_formatted = paper['points'].replace('🎯', '').strip()
             if not points_formatted.startswith('•'):
-                # Convertir comas en viñetas si no las tiene
+                # Convert commas to bullets if not already present
                 points_formatted = '• ' + points_formatted.replace(',', '\n• ').replace(';', '\n• ')
             
-            # Asegurar que el enlace sea válido
+            # Ensure the link is valid for the anchor
             paper_link = clean_url(paper['link'])
             if not paper_link or not ('http' in paper_link and '.' in paper_link):
                 paper_link = "#"  # Enlace placeholder si no es válido
@@ -589,7 +587,7 @@ def generate_html(papers, output_file):
 </html>
 """
 
-    # Escribir archivo
+    # Write the final HTML file
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(html_content)
     
@@ -597,9 +595,9 @@ def generate_html(papers, output_file):
     print(f"📊 {total_papers} papers procesados en {len(sorted_categories)} categorías")
 
 def main():
-    parser = argparse.ArgumentParser(description="Genera un portal web de noticias científicas desde CSV")
-    parser.add_argument('input_csv', help='Archivo CSV con los papers procesados')
-    parser.add_argument('output_html', help='Archivo HTML de salida para el portal')
+    parser = argparse.ArgumentParser(description="Generate a news portal HTML from a processed CSV")
+    parser.add_argument('input_csv', help='CSV file with processed papers')
+    parser.add_argument('output_html', help='Output HTML file for the portal')
     
     args = parser.parse_args()
     
