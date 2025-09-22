@@ -63,19 +63,37 @@ def build_prompt_for_batch(batch, max_per_paper_lines=3):
     return prompt
 
 def read_input_csv(path):
-    """Read the input CSV and return a list of rows as dicts."""
+    """Read the input CSV and return a list of rows as dicts, filtering out duplicate header rows."""
     rows = []
     with open(path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
-    # Basic validation of columns (non-fatal, only warn if missing)
+        # Basic validation of columns (non-fatal, only warn if missing)
         expected = {'name', 'Description', 'URL'}
         found = set(reader.fieldnames or [])
         missing = expected - found
         if missing:
             # does not break; assumes that user has columns with similar names
             print(f"Advertencia: columnas esperadas ausentes en input CSV: {missing}. Continuando...", file=sys.stderr)
+        
+        # Get the actual fieldnames to compare against
+        fieldnames = reader.fieldnames or []
+        
         for r in reader:
-            rows.append(r)
+            # Skip rows that are duplicate headers (where values match the column names)
+            is_header_row = False
+            if fieldnames:
+                # Check if this row contains the same values as the header
+                row_values = [r.get(field, '').strip().lower() for field in fieldnames]
+                header_values = [field.strip().lower() for field in fieldnames]
+                
+                # If row values match header names, it's a duplicate header
+                if row_values == header_values:
+                    print(f"Skipping duplicate header row: {list(r.values())}", file=sys.stderr)
+                    is_header_row = True
+            
+            if not is_header_row:
+                rows.append(r)
+    
     return rows
 
 def write_output_csv(prompts, out_path):
