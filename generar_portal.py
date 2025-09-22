@@ -29,6 +29,58 @@ def clean_text(text):
     # Preservar emojis y formato básico
     return text.strip()
 
+def clean_url(url):
+    """Limpia y valida URLs para asegurar que sean absolutos."""
+    if not url:
+        return ""
+    
+    url = url.strip()
+    
+    # Limpiar caracteres extraños y URLs malformadas
+    # Remover prefijos problemáticos como "xn--" y caracteres codificados
+    url = re.sub(r'^https?://xn--[^/]*', '', url)
+    url = re.sub(r'^[^h]*https?://', 'https://', url)
+    
+    # Limpiar URLs duplicadas como "https://https://..."
+    url = re.sub(r'https?://.*?https?://', 'https://', url)
+    
+    # Limpiar caracteres de control y espacios
+    url = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', url)
+    url = url.replace(' ', '')
+    
+    # Extraer la URL real si hay múltiples URLs concatenadas
+    arxiv_match = re.search(r'arxiv\.org/[^\s"<>]*', url)
+    if arxiv_match:
+        clean_part = arxiv_match.group(0)
+        if not clean_part.startswith('http'):
+            url = 'https://' + clean_part
+        else:
+            url = clean_part
+    
+    # Si ya tiene protocolo válido, devolverlo
+    if url.startswith(('http://', 'https://')):
+        # Validar que no tenga dobles barras problemáticas
+        url = re.sub(r'([^:])//+', r'\1/', url)
+        return url
+    
+    # Si empieza con //, agregar https:
+    if url.startswith('//'):
+        return 'https:' + url
+    
+    # Si es un path relativo de arXiv, construir URL completa
+    if url.startswith('/'):
+        return 'https://arxiv.org' + url
+    
+    # Si contiene arxiv.org pero no tiene protocolo
+    if 'arxiv.org' in url and not url.startswith('http'):
+        return 'https://' + url
+    
+    # Para otros casos, asumir que necesita https://
+    if '.' in url and not url.startswith('http'):
+        return 'https://' + url
+    
+    return url
+
 def extract_emoji_from_title(title):
     """Extrae el emoji del título si existe."""
     if not title:
@@ -120,12 +172,18 @@ def process_csv_robust(filepath):
                 emoji, clean_title = extract_emoji_from_title(title)
                 category = categorize_by_emoji(emoji)
                 
+                # Debug: imprimir URLs problemáticas
+                original_link = link.strip()
+                cleaned_link = clean_url(original_link)
+                if original_link != cleaned_link:
+                    print(f"URL limpiada: '{original_link}' → '{cleaned_link}'")
+                
                 paper = {
                     'title': clean_text(clean_title),
                     'emoji': emoji,
                     'summary': clean_text(summary),
                     'points': clean_text(points),
-                    'link': link.strip(),
+                    'link': cleaned_link,
                     'date': date.strip(),
                     'category': category
                 }
@@ -456,6 +514,11 @@ def generate_html(papers, output_file):
                 # Convertir comas en viñetas si no las tiene
                 points_formatted = '• ' + points_formatted.replace(',', '\n• ').replace(';', '\n• ')
             
+            # Asegurar que el enlace sea válido
+            paper_link = clean_url(paper['link'])
+            if not paper_link or not ('http' in paper_link and '.' in paper_link):
+                paper_link = "#"  # Enlace placeholder si no es válido
+            
             html_content += f"""
                 <article class="paper-card">
                     <span class="paper-emoji">{paper['emoji']}</span>
@@ -463,7 +526,7 @@ def generate_html(papers, output_file):
                     <p class="paper-summary">{paper['summary']}</p>
                     <div class="paper-points">{points_formatted}</div>
                     <div class="paper-footer">
-                        <a href="{paper['link']}" class="paper-link" target="_blank" rel="noopener">
+                        <a href="{paper_link}" class="paper-link" target="_blank" rel="noopener">
                             📖 Leer Paper
                         </a>
                         <span class="paper-date">{paper['date']}</span>
