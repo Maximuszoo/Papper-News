@@ -214,7 +214,7 @@ def generate_html(papers, output_file):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Noticias Científicas - ArXiv Daily</title>
+    <title>Papper news</title>
     <style>
         * {{
             margin: 0;
