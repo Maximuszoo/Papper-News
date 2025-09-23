@@ -1,4 +1,4 @@
-xpath, name
+xpath, categoria
 //*[@id="cs.AI"], "Artificial Intelligence"
 //*[@id="cs.SE"], "Software Engineering"
 //*[@id="cs.CE"], "Engineering, Finance, and Science"
