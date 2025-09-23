@@ -93,29 +93,6 @@ def extract_emoji_from_title(title):
     
     return "📄", title  # Default emoji
 
-def categorize_by_emoji(emoji):
-    """Map an emoji to a human-friendly category name."""
-    categories = {
-        "🤖": "Inteligencia Artificial",
-        "💻": "Desarrollo de Software", 
-        "🔒": "Seguridad y Privacidad",
-        "🧬": "Investigación Científica",
-        "🏥": "Salud e Informática Médica",
-        "📊": "Análisis de Datos",
-        "🔍": "Detección y Análisis",
-        "🎯": "Optimización y Benchmark",
-        "🌊": "Sistemas Marítimos",
-        "📐": "Matemáticas y Geometría",
-        "💼": "Negocios y Finanzas",
-        "🧠": "Cognición y Razonamiento",
-        "🤝": "Colaboración Multi-Agente",
-        "🔧": "Herramientas y Frameworks",
-        "🚇": "Transporte y Logística",
-        "📶": "Comunicaciones",
-    }
-    
-    return categories.get(emoji, "Otros")
-
 def process_csv_robust(filepath):
     """Process the CSV robustly, handling duplicated header rows and noisy data."""
     papers = []
