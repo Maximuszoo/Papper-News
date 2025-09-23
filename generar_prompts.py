@@ -2,11 +2,11 @@
 """
 generar_prompts.py
 
-Reads a CSV with columns: name, Description, URL
+Reads a CSV with columns: name, Description, URL, Category
 Groups records into batches (default 10) and produces an output CSV with
 a single column 'prompt' where each row contains the prompt (one line)
 that will be sent to the AI to summarize those papers (max 3 lines per paper,
-structure containing Title, Summary and Description).
+structure containing Title, Category, Summary and Description).
 
 Usage:
     python generar_prompts.py input.csv output.csv
@@ -27,6 +27,13 @@ def clean_text_one_line(text: str) -> str:
         return ""
     # Convert HTML entities if any
     text = html.unescape(text)
+    # Remove LaTeX commands that can cause JavaScript issues
+    text = re.sub(r'\\texttt\{([^}]*)\}', r'\1', text)
+    text = re.sub(r'\\textbf\{([^}]*)\}', r'\1', text)
+    text = re.sub(r'\\textit\{([^}]*)\}', r'\1', text)
+    text = re.sub(r'\\text\{([^}]*)\}', r'\1', text)
+    # Remove other common LaTeX commands
+    text = re.sub(r'\\[a-zA-Z]+\{([^}]*)\}', r'\1', text)
     # Replace any newline or return with a space
     text = re.sub(r'[\r\n]+', ' ', text)
     # Replace multiple spaces with one
@@ -35,7 +42,7 @@ def clean_text_one_line(text: str) -> str:
 
 def build_prompt_for_batch(batch, max_per_paper_lines=3):
     """
-    batch: list of dicts with keys: name, Description, URL
+    batch: list of dicts with keys: name, Description, URL, Category
     Returns a single-line string containing the instruction plus the formatted papers.
     """
     n = len(batch)
@@ -45,7 +52,7 @@ def build_prompt_for_batch(batch, max_per_paper_lines=3):
         "Usa emojis apropiados (🤖 para IA, 💻 para software, 🔒 para seguridad, 🧬 para investigación, etc.). "
         "IMPORTANTE: Responde ÚNICAMENTE con el JSON válido, sin texto adicional antes o después. "
         "Estructura JSON requerida: "
-        '{"papers": [{"titulo_español": "🔬 [emoji apropiado] Título traducido", "resumen": "[emoji 📝] Resumen en máximo 3 líneas", "puntos_clave": "[emoji 🎯] Aspectos más importantes", "enlace": "[emoji 🔗] URL del paper"}, ...]} '
+        '{"papers": [{"titulo_español": "🔬 [emoji apropiado] Título traducido", "categoria": "[emoji 📂] Categoría del paper", "resumen": "[emoji 📝] Resumen en máximo 3 líneas", "puntos_clave": "[emoji 🎯] Aspectos más importantes", "enlace": "[emoji 🔗] URL del paper"}, ...]} '
         "A continuación vienen los papers:"
     )
 
@@ -54,7 +61,8 @@ def build_prompt_for_batch(batch, max_per_paper_lines=3):
         title = clean_text_one_line(row.get('name', '') or row.get('title', ''))
         desc = clean_text_one_line(row.get('Description', '') or row.get('abstract', ''))
         url = clean_text_one_line(row.get('URL', ''))
-        entry = f"{idx}. Título Original: {title} | Descripción: {desc} | URL: {url}"
+        category = clean_text_one_line(row.get('Category', ''))
+        entry = f"{idx}. Título Original: {title} | Categoría: {category} | Descripción: {desc} | URL: {url}"
         entries.append(entry)
 
     # Merge everything in ONE LINE separating papers with " ||| " for clarity
@@ -68,7 +76,7 @@ def read_input_csv(path):
     with open(path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         # Basic validation of columns (non-fatal, only warn if missing)
-        expected = {'name', 'Description', 'URL'}
+        expected = {'name', 'Description', 'URL', 'Category'}
         found = set(reader.fieldnames or [])
         missing = expected - found
         if missing:
@@ -111,7 +119,7 @@ def chunk_list(lst, n):
 
 def main():
     parser = argparse.ArgumentParser(description="Genera prompts en lotes desde un CSV de papers.")
-    parser.add_argument('input_csv', help='Ruta al CSV de entrada (con columnas name, Description, URL).')
+    parser.add_argument('input_csv', help='Ruta al CSV de entrada (con columnas name, Description, URL, Category).')
     parser.add_argument('output_csv', help='Ruta al CSV de salida que contendrá la columna "prompt".')
     parser.add_argument('--batch-size', '-b', type=int, default=10, help='Cantidad de papers por prompt (default 10).')
     parser.add_argument('--max-lines', type=int, default=3, help='Máximo de renglones por resumen pedido a la IA (default 3).')

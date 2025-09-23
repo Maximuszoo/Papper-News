@@ -8,7 +8,7 @@ type //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[1]/
 click //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[2]/div/div[2]
 
 //wait for response to be generated (adjust time as needed)
-wait 100
+wait 105
 
 //extract the complete response from the specific location
 read //*[@id="root"]/div/div/div[2]/div[3]/div/div[2]/div/div[2]/div[1]/div[2] to deepseek_response
@@ -31,10 +31,29 @@ js begin
   // Try to extract JSON from the response
   var papers = [];
   try {
-    // Look for JSON pattern in the response
-    var jsonMatch = cleanResponse.match(/\{.*"papers".*\}/);
+    // Look for JSON pattern in the response - more robust regex
+    var jsonMatch = cleanResponse.match(/\{[\s\S]*"papers"[\s\S]*\}/);
     if (jsonMatch) {
-      var jsonData = JSON.parse(jsonMatch[0]);
+      var jsonText = jsonMatch[0];
+      
+      // Try to fix common JSON issues
+      jsonText = jsonText.replace(/jsonCopyDownload/g, ''); // Remove unwanted prefix
+      jsonText = jsonText.replace(/,\s*\]/, ']'); // Fix trailing commas in arrays
+      jsonText = jsonText.replace(/,\s*\}/, '}'); // Fix trailing commas in objects
+      
+      // If JSON seems incomplete (doesn't end with }]), try to complete it
+      if (!jsonText.match(/\}\s*\]\s*\}$/)) {
+        // Find the last complete paper object
+        var lastComplete = jsonText.lastIndexOf('"enlace": "🔗 https://');
+        if (lastComplete > -1) {
+          var afterEnlace = jsonText.indexOf('"', lastComplete + '"enlace": "🔗 https://'.length);
+          if (afterEnlace > -1) {
+            jsonText = jsonText.substring(0, afterEnlace + 1) + ' } ] }';
+          }
+        }
+      }
+      
+      var jsonData = JSON.parse(jsonText);
       
       // Process each paper from the JSON
       if (jsonData.papers && Array.isArray(jsonData.papers)) {
@@ -45,6 +64,9 @@ js begin
           var formattedPaper = '';
           if (paper.titulo_español) {
             formattedPaper += paper.titulo_español + '\n\n';
+          }
+          if (paper.categoria) {
+            formattedPaper += paper.categoria + '\n\n';
           }
           if (paper.resumen) {
             formattedPaper += paper.resumen + '\n\n';
