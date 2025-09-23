@@ -1,5 +1,5 @@
 //Create or overwrite CSV file with headers
-write `csv_row(["titulo", "resumen", "puntos_clave", "enlace", "fecha_procesado"])` to OUT/ProcessedPapers.csv
+write `csv_row(["titulo", "categoria", "resumen", "puntos_clave", "enlace", "fecha_procesado"])` to OUT/ProcessedPapers.csv
 
 //Enter website URL
 https://chat.deepseek.com/
@@ -38,6 +38,8 @@ js begin
   var papers = [];
   jsonData = null; // Make it global for later use
   debug_error = ''; // Initialize debug_error
+  debug_papers_array = ''; // Initialize debug_papers_array
+  papers_count = 0; // Initialize papers_count
   
   try {
     // Look for JSON pattern in the response
@@ -94,6 +96,7 @@ if total_papers greater than 0
       if (jsonData && jsonData.papers && jsonData.papers[csv_index]) {
         var paper = jsonData.papers[csv_index];
         csv_titulo = (paper.titulo_español || '').replace(/"/g, '""');
+        csv_categoria = (paper.categoria || '').replace(/"/g, '""');
         csv_resumen = (paper.resumen || '').replace(/"/g, '""');
         csv_puntos = (paper.puntos_clave || '').replace(/"/g, '""');
         csv_enlace = (paper.enlace || '').replace(/"/g, '""');
@@ -102,12 +105,12 @@ if total_papers greater than 0
         debug_saving = 'Guardando paper ' + (csv_index + 1) + ': ' + csv_titulo.substring(0, 50) + '...';
       } else {
         debug_saving = 'Error: No se pudo acceder al paper ' + csv_index;
-        csv_titulo = csv_resumen = csv_puntos = csv_enlace = csv_fecha = '';
+        csv_titulo = csv_categoria = csv_resumen = csv_puntos = csv_enlace = csv_fecha = '';
       }
     js finish
     
     echo Guardando: `debug_saving`
-    write `csv_row([csv_titulo, csv_resumen, csv_puntos, csv_enlace, csv_fecha])` to OUT/ProcessedPapers.csv
+    write `csv_row([csv_titulo, csv_categoria, csv_resumen, csv_puntos, csv_enlace, csv_fecha])` to OUT/ProcessedPapers.csv
 
 echo ============================================================================
 echo Proceso completado.

@@ -139,10 +139,11 @@ def process_csv_robust(filepath):
         
     # Map column indices by common header names
         title_idx = next((i for i, h in enumerate(headers) if h.lower() in ['titulo', 'title']), 0)
-        summary_idx = next((i for i, h in enumerate(headers) if h.lower() in ['resumen', 'summary']), 1)
-        points_idx = next((i for i, h in enumerate(headers) if h.lower() in ['puntos_clave', 'points', 'key_points']), 2)
-        link_idx = next((i for i, h in enumerate(headers) if h.lower() in ['enlace', 'link', 'url']), 3)
-        date_idx = next((i for i, h in enumerate(headers) if h.lower() in ['fecha', 'date', 'fecha_procesado']), 4)
+        category_idx = next((i for i, h in enumerate(headers) if h.lower() in ['categoria', 'category']), 1)
+        summary_idx = next((i for i, h in enumerate(headers) if h.lower() in ['resumen', 'summary']), 2)
+        points_idx = next((i for i, h in enumerate(headers) if h.lower() in ['puntos_clave', 'points', 'key_points']), 3)
+        link_idx = next((i for i, h in enumerate(headers) if h.lower() in ['enlace', 'link', 'url']), 4)
+        date_idx = next((i for i, h in enumerate(headers) if h.lower() in ['fecha', 'date', 'fecha_procesado']), 5)
         
         # Iterate over data rows and extract fields
         for row in reader:
@@ -157,6 +158,7 @@ def process_csv_robust(filepath):
             # Extract fields from the row
             try:
                 title = row[title_idx] if title_idx < len(row) else ""
+                category = row[category_idx] if category_idx < len(row) else ""
                 summary = row[summary_idx] if summary_idx < len(row) else ""
                 points = row[points_idx] if points_idx < len(row) else ""
                 link = row[link_idx] if link_idx < len(row) else ""
@@ -166,9 +168,14 @@ def process_csv_robust(filepath):
                 if not title or len(title.strip()) < 5:
                     continue
                 
-                # Extract emoji and categorize
+                # Extract emoji from title (keep for visual appeal but don't use for categorization)
                 emoji, clean_title = extract_emoji_from_title(title)
-                category = categorize_by_emoji(emoji)
+                
+                # Use the category directly from the CSV, clean emoji prefix if present
+                if category.startswith("📂 "):
+                    category = category[2:].strip()  # Remove emoji and space prefix
+                elif not category.strip():
+                    category = "Otros"  # Default category if empty
                 
                 # Debug: print cleaned URLs for problematic inputs
                 original_link = link.strip()
@@ -183,7 +190,7 @@ def process_csv_robust(filepath):
                     'points': clean_text(points),
                     'link': cleaned_link,
                     'date': date.strip(),
-                    'category': category
+                    'category': category.strip()
                 }
                 
                 papers.append(paper)
