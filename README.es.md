@@ -2,7 +2,32 @@
 
 📖 **Available in other languages:** [English](README.md) | **[Español](README.es.md)**
 
-## 📋 Descripción General
+## � Índice de Contenidos
+- [📋 Descripción General](#-descripción-general)
+- [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
+- [🚀 Componentes del Sistema](#-componentes-del-sistema)
+- [⚙️ Requisitos del Sistema](#️-requisitos-del-sistema)
+- [🔐 Configuración Inicial Crítica](#-configuración-inicial-crítica)
+- [📊 Configuración de Categorías](#-configuración-de-categorías)
+- [📱 Configuración de WhatsApp](#-configuración-de-whatsapp)
+- [🔄 Flujo de Trabajo](#-flujo-de-trabajo)
+- [🐧 Ejecución en Linux](#-ejecución-en-linux)
+  - [Modo 1: Portal HTML](#modo-1-portal-html-)
+  - [Modo 2: WhatsApp](#modo-2-whatsapp-)
+  - [Ejecución Manual por Componentes](#ejecución-manual-por-componentes)
+  - [Personalización de Parámetros](#personalización-de-parámetros)
+- [🪟 Ejecución en Windows](#-ejecución-en-windows)
+  - [Archivos Disponibles](#archivos-disponibles)
+  - [Configuración de Rutas Críticas](#configuración-de-rutas-críticas)
+  - [Modo 1: Portal HTML](#modo-1-portal-html--1)
+  - [Modo 2: WhatsApp](#modo-2-whatsapp--1)
+- [🛠️ Solución de Problemas](#️-solución-de-problemas)
+- [🔧 Personalización Avanzada](#-personalización-avanzada)
+- [📊 Formato de Datos](#-formato-de-datos)
+- [🎓 Información Académica](#-información-académica)
+- [🆘 Soporte y Mantenimiento](#-soporte-y-mantenimiento)
+
+## �📋 Descripción General
 
 Paper News es un sistema automatizado que extrae, procesa y distribuye papers científicos desde arXiv utilizando TagUI para automatización web y DeepSeek AI para procesamiento inteligente de contenido. El sistema puede generar tanto portales web interactivos como enviar resúmenes directamente a WhatsApp.
 
