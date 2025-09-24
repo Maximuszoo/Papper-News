@@ -83,7 +83,7 @@ Papper-News/
 ### Required Software
 - **Python 3.7+** with pip
 - **TagUI** (latest version)
-- **Google Chrome/Chromium**
+- **Google Chrome**
 - **Stable Internet Connection**
 
 ### Python Dependencies
