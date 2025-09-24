@@ -2,7 +2,7 @@
 write `csv_row(["titulo", "categoria", "resumen", "puntos_clave", "enlace", "fecha_procesado"])` to OUT/ProcessedPapers.csv
 
 //Read and parse CSV file using TagUI native command
-load /home/maximo/Código/TagUI/Proyecto TPA/OUT/Prompts.csv to csv_content
+load OUT/Prompts.csv to csv_content
 
 js begin
   // Parse CSV content

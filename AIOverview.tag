@@ -199,9 +199,6 @@ for paper_index from 0 to total_papers-1
   click //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[3]
   type //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[3] as `current_paper`
   click //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[4]/div/span/div/div/div[1]/div[1]
-  
-  // Wait between messages
-  //wait 2
 }
 
 // Final wait and completion message
@@ -212,6 +209,7 @@ echo Todos los papers del prompt `prompt_number` han sido enviados exitosamente!
 echo Total de papers procesados: `total_papers`
 echo ============================================================================
 
+// This is the end of loop for each prompt
 }
 
 echo ============================================================================
