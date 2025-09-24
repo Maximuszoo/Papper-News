@@ -29,7 +29,7 @@ Paper News is an automated system that extracts, processes, and distributes scie
 
 ### 📁 File Structure
 ```
-Proyecto TPA/
+Papper-News/
 ├── AutoPapper.tag              # Papers extraction from arXiv
 ├── generar_prompts.py          # AI prompt generation
 ├── AIOverview.tag              # AI processing → WhatsApp
@@ -383,6 +383,39 @@ titulo,categoria,resumen,puntos_clave,enlace,fecha_procesado
   ]
 }
 ```
+
+---
+
+## 🎓 Academic Information
+
+### Project Background
+This project was developed for the **"Tecnologías para la Automatización"** (Automation Technologies) course at **Universidad Tecnológica Nacional, Facultad Regional Concepción del Uruguay** (UTN FRCU), as part of the **Ingeniería en Sistemas de Información** (Information Systems Engineering) degree program.
+
+### Development Team - Group 11 (2025)
+- **Leal, Pablo Valentín**
+- **Martínez, Ignacio Gabriel** 
+- **Moreyra, Omar Sebastián**
+- **Schultheis, Valentín**
+- **Fraisinet, Máximo Exequiel**
+
+### 📄 License & Educational Purpose
+This project is released under the **Unlicense** to ensure maximum accessibility for educational purposes. We encourage:
+
+- ✅ **Students** from UTN FRCU or any academic institution
+- ✅ **Researchers** interested in automation technologies
+- ✅ **Developers** seeking to learn web automation and AI integration
+- ✅ **Anyone** interested in scientific paper processing systems
+
+**Feel free to use, modify, and distribute this code for learning, teaching, or implementing similar functionality.**
+
+### 🏛️ Institution Information
+- **University**: Universidad Tecnológica Nacional (UTN)
+- **Faculty**: Facultad Regional Concepción del Uruguay (FRCU)
+- **Program**: Ingeniería en Sistemas de Información
+- **Course**: Tecnologías para la Automatización
+- **Academic Year**: 2025
+
+---
 
 ## 🆘 Support and Maintenance
 

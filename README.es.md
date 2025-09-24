@@ -29,7 +29,7 @@ Paper News es un sistema automatizado que extrae, procesa y distribuye papers ci
 
 ### 📁 Estructura de Archivos
 ```
-Proyecto TPA/
+Papper-News/
 ├── AutoPapper.tag              # Extracción de papers desde arXiv
 ├── generar_prompts.py          # Generación de prompts para IA
 ├── AIOverview.tag              # Procesamiento IA → WhatsApp
@@ -379,6 +379,37 @@ PapperNewsWhatsapp.bat
 - Solo cambian los separadores de ruta (`/` → `\`)
 - La configuración inicial con `tagui -c "https://google.com; wait 1000"` es **igualmente importante**
 - Asegurar que Python y TagUI estén en el PATH del sistema
+
+---
+
+## 🎓 Información Académica
+
+### Contexto del Proyecto
+Este proyecto fue desarrollado para la cátedra **"Tecnologías para la Automatización"** de la **Universidad Tecnológica Nacional, Facultad Regional Concepción del Uruguay** (UTN FRCU), como parte de la carrera **Ingeniería en Sistemas de Información**.
+
+### Equipo de Desarrollo - Grupo 11 (2025)
+- **Leal, Pablo Valentín**
+- **Martínez, Ignacio Gabriel**
+- **Moreyra, Omar Sebastián** 
+- **Schultheis, Valentín**
+- **Fraisinet, Máximo Exequiel**
+
+### 📄 Licencia y Propósito Educativo
+Este proyecto se distribuye bajo la licencia **Unlicense** para garantizar máxima accesibilidad con fines educativos. Fomentamos su uso por:
+
+- ✅ **Estudiantes** de UTN FRCU o cualquier institución académica
+- ✅ **Investigadores** interesados en tecnologías de automatización
+- ✅ **Desarrolladores** que deseen aprender automatización web e integración con IA
+- ✅ **Cualquier persona** interesada en sistemas de procesamiento de papers científicos
+
+**Siéntete libre de usar, modificar y distribuir este código para aprender, enseñar o implementar funcionalidades similares.**
+
+### 🏛️ Información Institucional
+- **Universidad**: Universidad Tecnológica Nacional (UTN)
+- **Facultad**: Facultad Regional Concepción del Uruguay (FRCU)
+- **Carrera**: Ingeniería en Sistemas de Información
+- **Cátedra**: Tecnologías para la Automatización
+- **Año Académico**: 2025
 
 ---
 
