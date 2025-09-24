@@ -7,7 +7,7 @@ OPENSSL_CONF="" tagui AutoPapper.tag IN/xpaths.csv -t
 python generar_prompts.py OUT/AutoPapper.csv OUT/Prompts.csv
 
 # Processing the prompts with AI to get summaries and titles
-OPENSSL_CONF="" tagui AICSV.tag OUT/Prompts.csv -t
+OPENSSL_CONF="" tagui AICSV.tag -t
 
 # Creating a news portal HTML file with the processed papers
 python generar_portal.py OUT/ProcessedPapers.csv portal_noticias.html

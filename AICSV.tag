@@ -1,17 +1,59 @@
 //Create or overwrite CSV file with headers
 write `csv_row(["titulo", "categoria", "resumen", "puntos_clave", "enlace", "fecha_procesado"])` to OUT/ProcessedPapers.csv
 
-//Enter website URL
-https://chat.deepseek.com/
+//Read and parse CSV file using TagUI native command
+load /home/maximo/Código/TagUI/Proyecto TPA/OUT/Prompts.csv to csv_content
 
-//write in textarea
-type //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[1]/textarea as `prompt`
+js begin
+  // Parse CSV content
+  var lines = csv_content.split('\n');
+  var prompts = [];
+  
+  // Skip header line and extract prompts  
+  for (var i = 1; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (line) {
+      // Remove outer quotes if present
+      var prompt = line.replace(/^"/, '').replace(/"$/, '');
+      // Replace double quotes with single quotes for CSV escaping
+      prompt = prompt.replace(/""/g, '"');
+      if (prompt) {
+        prompts.push(prompt);
+      }
+    }
+  }
+  
+  total_prompts = prompts.length;
+  prompt_array = prompts;
+js finish
+
+echo ============================================================================
+echo Encontrados `total_prompts` prompts para procesar
+echo ============================================================================
+
+//Loop through each prompt
+for prompt_index from 0 to total_prompts-1
+{
+  js begin
+    current_prompt = prompt_array[prompt_index];
+    prompt_number = prompt_index + 1;
+  js finish
+  
+  echo ============================================================================
+  echo Procesando prompt `prompt_number` de `total_prompts`
+  echo ============================================================================
+  
+  //Enter website URL
+  https://chat.deepseek.com/
+
+  //write in textarea
+  type //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[1]/textarea as `current_prompt`
 
 //click send button
 click //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[2]/div/div[2]
 
 //wait for response to be generated (adjust time as needed)
-wait 100
+wait 120
 
 //extract the complete response from the specific location
 read //*[@id="root"]/div/div/div[2]/div[3]/div/div[2]/div/div[2]/div[1]/div[2] to deepseek_response
@@ -91,7 +133,9 @@ echo ===========================================================================
 
 // Write each paper to CSV if we have valid data
 if total_papers greater than 0
+{
   for csv_index from 0 to total_papers-1
+  {
     js begin
       if (jsonData && jsonData.papers && jsonData.papers[csv_index]) {
         var paper = jsonData.papers[csv_index];
@@ -111,7 +155,16 @@ if total_papers greater than 0
     
     echo Guardando: `debug_saving`
     write `csv_row([csv_titulo, csv_categoria, csv_resumen, csv_puntos, csv_enlace, csv_fecha])` to OUT/ProcessedPapers.csv
+  }
+}
 
 echo ============================================================================
-echo Proceso completado.
+echo Todos los papers del prompt `prompt_number` han sido guardados exitosamente!
+echo Total de papers procesados: `total_papers`
+echo ============================================================================
+
+}
+
+echo ============================================================================
+echo PROCESAMIENTO COMPLETO - Todos los `total_prompts` prompts han sido procesados!
 echo ============================================================================

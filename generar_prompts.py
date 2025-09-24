@@ -107,7 +107,7 @@ def read_input_csv(path):
 def write_output_csv(prompts, out_path):
     """Write an output CSV with a single 'prompt' column."""
     with open(out_path, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(f, quoting=csv.QUOTE_ALL)
         writer.writerow(['prompt'])
         for p in prompts:
             writer.writerow([p])
