@@ -127,9 +127,11 @@ pip install pandas requests beautifulsoup4
 ### Step 1: Configure TagUI Profile
 Before running any script, it is **mandatory** to configure TagUI's Chrome profile:
 
-```bash
-# Open TagUI with extended wait time
-tagui -c "https://google.com; wait 1000"
+```tagui
+// Open TagUI with extended wait time
+https://google.com 
+
+wait 1000
 ```
 
 ### Step 2: Service Registration
@@ -304,11 +306,6 @@ export OPENSSL_CONF=""
 | `AICSV.tag` | 2 | `OUT/ProcessedPapers.csv` | `OUT\ProcessedPapers.csv` | Output CSV headers |
 | `AICSV.tag` | 5 | `OUT/Prompts.csv` | `OUT\Prompts.csv` | Prompts loading |
 | `AICSV.tag` | 157 | `OUT/ProcessedPapers.csv` | `OUT\ProcessedPapers.csv` | Processed papers writing |
-| `PapperNewsHTML.bat` | 4 | `IN/xpaths.csv` | `IN\xpaths.csv` | Categories configuration |
-| `PapperNewsHTML.bat` | 7 | `OUT/AutoPapper.csv OUT/Prompts.csv` | `OUT\AutoPapper.csv OUT\Prompts.csv` | Prompts generation |
-| `PapperNewsHTML.bat` | 13 | `OUT/ProcessedPapers.csv` | `OUT\ProcessedPapers.csv` | Portal generation |
-| `PapperNewsWhatsapp.bat` | 4 | `IN/xpaths.csv` | `IN\xpaths.csv` | Categories configuration |
-| `PapperNewsWhatsapp.bat` | 7 | `OUT/AutoPapper.csv OUT/Prompts.csv` | `OUT\AutoPapper.csv OUT\Prompts.csv` | Prompts generation |
 
 ### Mode 1: HTML Portal 🌐
 ```cmd
@@ -343,7 +340,7 @@ PapperNewsWhatsapp.bat
 ### Important Notes for Windows
 - The `.tag` and `.py` files are the same as in Linux
 - Only path separators change (`/` → `\`)
-- Initial configuration with `tagui -c "https://google.com; wait 1000"` is **equally important**
+- Initial configuration with `tagui -> "https://google.com -> wait 1000"` is **equally important**
 - Ensure Python and TagUI are in system PATH
 
 ---
@@ -352,9 +349,6 @@ PapperNewsWhatsapp.bat
 
 ### Error: "TagUI not recognized"
 ```bash
-# Verify installation
-tagui version
-
 # Reinstall or update TagUI if necessary
 tagui update
 ```

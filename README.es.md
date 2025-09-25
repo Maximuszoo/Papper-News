@@ -125,9 +125,11 @@ pip install pandas requests beautifulsoup4
 ### Paso 1: Configurar Perfil TagUI
 Antes de ejecutar cualquier script, es **obligatorio** configurar el perfil de Chrome de TagUI:
 
-```bash
-# Abrir TagUI con tiempo de espera extendido
-tagui -c "https://google.com; wait 1000"
+```tagui
+// Abrir TagUI con tiempo de espera extendido
+https://google.com 
+
+wait 1000
 ```
 
 ### Paso 2: Registro en Servicios
@@ -286,9 +288,6 @@ export OPENSSL_CONF=""
 
 ### Error: "TagUI no reconocido"
 ```bash
-# Verificar instalación
-tagui version
-
 # Reinstalar TagUI o actualizar si es necesario
 tagui update
 ```
@@ -363,11 +362,6 @@ titulo,categoria,resumen,puntos_clave,enlace,fecha_procesado
 | `AICSV.tag` | 2 | `OUT/ProcessedPapers.csv` | `OUT\ProcessedPapers.csv` | Headers del CSV de salida |
 | `AICSV.tag` | 5 | `OUT/Prompts.csv` | `OUT\Prompts.csv` | Carga de prompts |
 | `AICSV.tag` | 157 | `OUT/ProcessedPapers.csv` | `OUT\ProcessedPapers.csv` | Escritura de papers procesados |
-| `PapperNewsHTML.bat` | 4 | `IN/xpaths.csv` | `IN\xpaths.csv` | Configuración de categorías |
-| `PapperNewsHTML.bat` | 7 | `OUT/AutoPapper.csv OUT/Prompts.csv` | `OUT\AutoPapper.csv OUT\Prompts.csv` | Generación de prompts |
-| `PapperNewsHTML.bat` | 13 | `OUT/ProcessedPapers.csv` | `OUT\ProcessedPapers.csv` | Generación de portal |
-| `PapperNewsWhatsapp.bat` | 4 | `IN/xpaths.csv` | `IN\xpaths.csv` | Configuración de categorías |
-| `PapperNewsWhatsapp.bat` | 7 | `OUT/AutoPapper.csv OUT/Prompts.csv` | `OUT\AutoPapper.csv OUT\Prompts.csv` | Generación de prompts |
 
 ### Modo 1: Portal HTML 🌐
 ```cmd
@@ -402,7 +396,7 @@ PapperNewsWhatsapp.bat
 ### Notas Importantes para Windows
 - Los archivos `.tag` y `.py` son los mismos que en Linux
 - Solo cambian los separadores de ruta (`/` → `\`)
-- La configuración inicial con `tagui -c "https://google.com; wait 1000"` es **igualmente importante**
+- La configuración inicial con `tagui -> "https://google.com -> wait 1000"` es **igualmente importante**
 - Asegurar que Python y TagUI estén en el PATH del sistema
 
 ---
