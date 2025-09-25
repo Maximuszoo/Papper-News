@@ -2,7 +2,7 @@
 
 📖 **Available in other languages:** [English](README.md) | **[Español](README.es.md)**
 
-## � Índice de Contenidos
+## Índice de Contenidos
 - [📋 Descripción General](#-descripción-general)
 - [🏗️ Arquitectura del Sistema](#️-arquitectura-del-sistema)
 - [🚀 Componentes del Sistema](#-componentes-del-sistema)
@@ -27,7 +27,7 @@
 - [🎓 Información Académica](#-información-académica)
 - [🆘 Soporte y Mantenimiento](#-soporte-y-mantenimiento)
 
-## �📋 Descripción General
+## 📋 Descripción General
 
 Paper News es un sistema automatizado que extrae, procesa y distribuye papers científicos desde arXiv utilizando TagUI para automatización web y DeepSeek AI para procesamiento inteligente de contenido. El sistema puede generar tanto portales web interactivos como enviar resúmenes directamente a WhatsApp.
 
