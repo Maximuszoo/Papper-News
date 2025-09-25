@@ -6,9 +6,9 @@ echo PAPER NEWS WHATSAPP - Procesamiento automatizado para Windows
 echo ====================================================================
 
 echo [1/3] Extrayendo papers de arXiv...
-tagui AutoPapper.tag IN\xpaths.csv -t
+start "Extraccion Papers" /wait cmd /c "tagui AutoPapper.tag IN\xpaths.csv -t"
 if %errorlevel% neq 0 (
-    echo ❌ ERROR: Falló la extracción de papers
+    echo ❌ ERROR: Falló la extracción de papers de arXiv
     pause
     exit /b 1
 )
@@ -23,7 +23,7 @@ if %errorlevel% neq 0 (
 
 echo [3/3] Procesando con IA y enviando a WhatsApp...
 echo ⚠️  NOTA: Asegúrate de tener WhatsApp Web abierto y logueado en el perfil de TagUI
-tagui AIOverview.tag -t
+start "Procesamiento IA y WhatsApp" /wait cmd /c "tagui AIOverview.tag -t"
 if %errorlevel% neq 0 (
     echo ❌ ERROR: Falló el procesamiento y envío a WhatsApp
     pause

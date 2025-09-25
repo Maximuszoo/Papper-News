@@ -6,7 +6,7 @@ echo PAPER NEWS HTML - Procesamiento automatizado para Windows
 echo ====================================================================
 
 echo [1/4] Extrayendo papers de arXiv...
-tagui AutoPapper.tag IN\xpaths.csv -t
+start "Extraccion Papers" /wait cmd /c "tagui AutoPapper.tag IN\xpaths.csv -t"
 if %errorlevel% neq 0 (
     echo ❌ ERROR: Falló la extracción de papers
     pause
@@ -22,7 +22,7 @@ if %errorlevel% neq 0 (
 )
 
 echo [3/4] Procesando con IA y generando CSV...
-tagui AICSV.tag -t
+start "Procesamiento IA y CSV" /wait cmd /c "tagui AICSV.tag -t"
 if %errorlevel% neq 0 (
     echo ❌ ERROR: Falló el procesamiento con IA
     pause
