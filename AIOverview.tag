@@ -175,7 +175,7 @@ for prompt_index from 0 to total_prompts-1
   // Open WhatsApp Web
   https://web.whatsapp.com/
 
-  wait 7
+  wait 10
 
   // Click in the group chat name to open it
   click Papper News 9129324123
