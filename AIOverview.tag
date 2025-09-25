@@ -198,7 +198,9 @@ for prompt_index from 0 to total_prompts-1
     // Click the message input box, type the current paper, and send
     click //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[3]
     type //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[3] as `current_paper`
-    click //*[@id="main"]/footer/div[1]/div/span/div/div[2]/div/div[4]/div/span/div/div/div[1]/div[1]
+
+    //Press send button (With the xpath in diferent pc, sometimes the xpath changes)
+    dom document.querySelector("span[data-icon='wds-ic-send-filled']").click()
   }
 
   // Final wait and completion message
