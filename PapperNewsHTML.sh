@@ -10,7 +10,7 @@ python generar_prompts.py OUT/AutoPapper.csv OUT/Prompts.csv
 OPENSSL_CONF="" tagui AICSV.tag -t
 
 # Creating a news portal HTML file with the processed papers
-python generar_portal.py OUT/ProcessedPapers.csv portal_noticias.html
+python generar_portal.py OUT/ProcessedPapers.csv OUT/portal_noticias.html
 
 # Cleaning up intermediate files
 rm OUT/Prompts.csv OUT/AutoPapper.csv OUT/ProcessedPapers.csv

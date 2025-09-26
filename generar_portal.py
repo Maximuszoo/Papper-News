@@ -24,7 +24,7 @@ def clean_text(text):
     """Clean and sanitize text for inclusion in HTML."""
     if not text:
         return ""
-    # Escape HTML
+    
     text = html.escape(text)
     # Preserve emojis and basic formatting
     return text.strip()
@@ -252,10 +252,10 @@ def generate_html(papers, output_file):
         }}
         
         .stats {{
-            margin-top: 1rem;
+            margin: 1.5rem 0;
             display: flex;
-            justify-content: center;
             gap: 2rem;
+            justify-content: center;
             flex-wrap: wrap;
         }}
         
@@ -411,9 +411,114 @@ def generate_html(papers, output_file):
             color: #b3b3b3;
         }}
         
+        /* Filter Section Layout */
+        .filter-section {{
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }}
+        
+        /* Filter Dropdown Styles */
+        .dropdown {{
+            position: relative;
+            display: inline-block;
+        }}
+        
+        .dropdown-toggle {{
+            background: #2a2a2a;
+            color: #ffffff;
+            border: 1px solid #404040;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }}
+        
+        .dropdown-toggle:hover {{
+            background: #3a3a3a;
+            border-color: #505050;
+        }}
+        
+        .dropdown-toggle::after {{
+            content: "▼";
+            margin-left: 8px;
+            font-size: 0.7rem;
+            transition: transform 0.2s ease;
+        }}
+        
+        .dropdown.open .dropdown-toggle::after {{
+            transform: rotate(180deg);
+        }}
+        
+        .dropdown-menu {{
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 200px;
+            background: #2a2a2a;
+            border: 1px solid #404040;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            max-height: 250px;
+            overflow-y: auto;
+        }}
+        
+        .dropdown.open .dropdown-menu {{
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }}
+        
+        .dropdown-item {{
+            display: block;
+            padding: 8px 12px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }}
+        
+        .dropdown-item:hover {{
+            background: #3a3a3a;
+        }}
+        
+        .dropdown-item.active {{
+            background: #3a3a3a;
+            color: #ffffff;
+        }}
+        
+        .papers-count {{
+            margin: 0.5rem 0;
+            color: #b3b3b3;
+            font-size: 0.85rem;
+            text-align: center;
+        }}
+        
         @media (max-width: 768px) {{
             .container {{
                 padding: 1rem;
+            }}
+            
+            .filter-section {{
+                text-align: center;
+                padding: 1rem;
+            }}
+            
+            .stats {{
+                gap: 1rem;
+                flex-wrap: wrap;
             }}
             
             h1 {{
@@ -422,10 +527,6 @@ def generate_html(papers, output_file):
             
             .papers-grid {{
                 grid-template-columns: 1fr;
-            }}
-            
-            .stats {{
-                gap: 1rem;
             }}
         }}
         
@@ -467,8 +568,27 @@ def generate_html(papers, output_file):
                 <div class="stat-item">📅 {current_date}</div>
                 <div class="stat-item">🏷️ {len(sorted_categories)} Categorías</div>
             </div>
+
         </div>
     </header>
+
+    <section class="filter-section">
+        <div class="dropdown" id="categoryDropdown">
+            <button class="dropdown-toggle">
+                Filtrar por categoría
+            </button>
+            <div class="dropdown-menu">
+                <button class="dropdown-item" onclick="filterByCategory('all')">Mostrar todas</button>"""
+
+    # Add category options to dropdown (simplified)
+    for category_name, category_papers in sorted_categories:
+        html_content += f"""
+                <button class="dropdown-item" onclick="filterByCategory('{category_name}')">{category_name}</button>"""
+
+    html_content += f"""
+            </div>
+        </div>
+    </section>
 
     <main class="container">
 """
@@ -476,10 +596,10 @@ def generate_html(papers, output_file):
     # Render content for each category
     for category_name, category_papers in sorted_categories:
         # Get the most common emoji in the category
-        category_emoji = category_papers[0]['emoji'] if category_papers else "📄"
+        category_emoji = get_category_emoji(category_papers)
         
         html_content += f"""
-        <section class="category">
+        <section class="category" data-category="{category_name}">
             <div class="category-header">
                 <span style="font-size: 1.5rem;">{category_emoji}</span>
                 <h2 class="category-title">{category_name}</h2>
@@ -566,6 +686,48 @@ def generate_html(papers, output_file):
             card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
         }});
+
+        // Dropdown functionality
+        const dropdown = document.getElementById('categoryDropdown');
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+        const categories = document.querySelectorAll('.category');
+        const papersCount = document.getElementById('papersCount');
+        
+        dropdownToggle.addEventListener('click', function() {{
+            dropdown.classList.toggle('open');
+        }});
+
+        function filterByCategory(category) {{
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (category === 'all') {{
+                categories.forEach(cat => cat.style.display = 'block');
+                dropdownToggle.textContent = 'Filtrar por categoría';
+                papersCount.textContent = `Mostrando {total_papers} papers en {len(sorted_categories)} categorías`;
+            }} else {{
+                let visiblePapers = 0;
+                categories.forEach(cat => {{
+                    if (cat.dataset.category === category) {{
+                        cat.style.display = 'block';
+                        visiblePapers += cat.querySelectorAll('.paper-card').length;
+                    }} else {{
+                        cat.style.display = 'none';
+                    }}
+                }});
+                dropdownToggle.textContent = category;
+                papersCount.textContent = `Mostrando ${{visiblePapers}} papers en 1 categoría`;
+            }}
+            dropdown.classList.remove('open');
+        }}
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {{
+            if (!dropdown.contains(e.target)) {{
+                dropdown.classList.remove('open');
+            }}
+        }});
     </script>
 </body>
 </html>
@@ -577,6 +739,39 @@ def generate_html(papers, output_file):
     
     print(f"✅ Portal generado exitosamente: {output_file}")
     print(f"📊 {total_papers} papers procesados en {len(sorted_categories)} categorías")
+
+def get_category_emoji(category_papers):
+    """Get the most common emoji for a category based on its papers."""
+    emoji_count = {}
+    
+    for paper in category_papers:
+        title = paper.get('title', '')
+        emoji, _ = extract_emoji_from_title(title)
+        emoji_count[emoji] = emoji_count.get(emoji, 0) + 1
+    
+    if emoji_count:
+        return max(emoji_count, key=emoji_count.get)
+    
+    # Default emojis por categoría
+    category_emojis = {
+        'Computer Vision': '👁️',
+        'Natural Language Processing': '🗣️',
+        'Machine Learning': '🤖',
+        'Artificial Intelligence': '🧠',
+        'Data Science': '📊',
+        'Robotics': '🤖',
+        'Deep Learning': '🧠',
+        'Statistics': '📈',
+        'Mathematics': '🔢',
+    }
+    
+    # Try to match category name
+    for category in category_papers:
+        cat_name = category.get('category', '')
+        if cat_name in category_emojis:
+            return category_emojis[cat_name]
+    
+    return "📄"  # Default
 
 def main():
     parser = argparse.ArgumentParser(description="Generate a news portal HTML from a processed CSV")
