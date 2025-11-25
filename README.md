@@ -1,11 +1,5 @@
 # 🔬 Paper News - Automated Scientific Papers Processing System
 
----
-
-https://github.com/user-attachments/assets/f020afc8-9e49-4ac4-93f6-84288cad5892
-
----
-
 📖 **Available in other languages:** **[English](README.md)** | [Español](README.es.md)
 
 ## Table of Contents
