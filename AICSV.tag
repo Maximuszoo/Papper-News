@@ -50,7 +50,7 @@ for prompt_index from 0 to total_prompts-1
   type //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[1]/textarea as `current_prompt`
 
   //click send button
-  click //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[2]/div/div[2]
+  click //*[@id="root"]/div/div/div[2]/div[3]/div/div/div[2]/div[2]/div/div/div[2]/div[3]/div[2]/div/div[1]
 
   //wait for response to be generated (adjust time as needed)
   wait 120

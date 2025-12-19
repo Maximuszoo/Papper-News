@@ -51,8 +51,10 @@ def build_prompt_for_batch(batch, max_per_paper_lines=3):
         f"Para cada paper traduce el título al español y crea un objeto con los campos especificados. "
         "Usa emojis apropiados (🤖 para IA, 💻 para software, 🔒 para seguridad, 🧬 para investigación, etc.). "
         "IMPORTANTE: Responde ÚNICAMENTE con el JSON válido, sin texto adicional antes o después. "
+        "CRÍTICO: Usa EXACTAMENTE la categoría proporcionada en cada paper, NO crees subcategorías ni la modifiques. "
+        "Mantén la categoría original tal cual está especificada. Pero traducida al español. "
         "Estructura JSON requerida: "
-        '{"papers": [{"titulo_español": "🔬 [emoji apropiado] Título traducido", "categoria": "[emoji 📂] Categoría del paper", "resumen": "[emoji 📝] Resumen en máximo 3 líneas", "puntos_clave": "[emoji 🎯] Aspectos más importantes", "enlace": "[emoji 🔗] URL del paper"}, ...]} '
+        '{"papers": [{"titulo_español": "🔬 [emoji apropiado] Título traducido", "categoria": "[emoji 📂] Categoría EXACTA del paper (sin modificar pero traducida al español)", "resumen": "[emoji 📝] Resumen en máximo 3 líneas", "puntos_clave": "[emoji 🎯] Aspectos más importantes", "enlace": "[emoji 🔗] URL del paper"}, ...]} '
         "A continuación vienen los papers:"
     )
 

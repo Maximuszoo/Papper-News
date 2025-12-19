@@ -1,7 +1,9 @@
 xpath, category
+//*[@id="cs.NE"], "Neural and Evolutionary Computing"
 //*[@id="cs.SE"], "Software Engineering"
 //*[@id="cs.CE"], "Engineering, Finance, and Science"
 //*[@id="cs.AI"], "Artificial Intelligence"
 //*[@id="cs.LG"], "Machine Learning"
+//*[@id="cs.CY"], "Computer and Society"
 
 
